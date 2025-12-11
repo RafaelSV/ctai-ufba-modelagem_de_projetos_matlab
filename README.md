@@ -33,8 +33,16 @@ Regras de precedencia: 'predecessors' pode listar IDs separados por virgula, pon
    - 'baselineFile': caminho do baseline para comparar.
    - 'saveBaseline': 'true' para salvar o baseline da execucao atual.
 
+## Comparar MATLAB vs Simulink
+- Ja existe um arquivo de exemplo no repositorio para ver a comparacao pronta.
+- Para gerar do zero: 
+  1) rode a simulacao no Simulink ('Modelos.slx'); 
+  2) execute 'export.m' para salvar os resultados do Simulink; 
+  3) execute 'main_simulation.m', que vai gerar os graficos originais mais as curvas lado a lado das duas simulacoes.
+
 ## Saidas esperadas
 - Work Done (WD) acumulado por tarefa e total do projeto.
-- Sinais de 'Finished' de cada tarefa ao longo do tempo.
+- Sinais de 'Enable' e 'Finished' de cada tarefa ao longo do tempo.
 - Linha do tempo do projeto com instantes de habilitacao e conclusao.
 - Graficos Execucao Atual vs Baseline (5 Ws e duracao total).
+- Garficos de comparação dos Enables, Finisheds e Works
