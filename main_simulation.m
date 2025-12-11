@@ -112,3 +112,6 @@ end
 baselineFile = 'Baseline_sim_matlab.xlsx';
 saveBaseline = false;
 plot_project_results(sim, Tasks, proj_enable_flag, proj_finished_flag, baselineFile, saveBaseline);
+
+% plota a comparação com o simulink
+compare_simulink_matlab(sim, 'Simulink_Output.xlsx');
