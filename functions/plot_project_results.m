@@ -24,6 +24,31 @@ function plot_project_results(sim, Tasks, proj_enable_flag, proj_finished_flag, 
         end
     end
     
+
+    %% ============================================================
+    % Flags de Enable
+    %% ============================================================
+    figure('Name','Enable das Tasks','Color','w');
+    tiledlayout(nTasks,1,'TileSpacing','tight');
+
+    for i = 1:nTasks
+        nexttile;
+        plot(sim.time, sim.hist.enable(:,i), 'LineWidth', 1.6);
+        ylim([-0.1 1.1]);
+        yticks([0 1]);
+        yticklabels({'Desabilitada','Habilitada'});
+        grid on;
+        ylabel(sprintf('T%02d', i), 'FontWeight','bold');
+        if i == 1
+            title('Sinal "Enable" das Tasks','FontWeight','bold');
+        end
+        if i < nTasks
+            set(gca,'XTickLabel',[]);
+        else
+            xlabel('Tempo (TU)');
+        end
+    end
+    
     
     %% ============================================================
     % Flags de Finished

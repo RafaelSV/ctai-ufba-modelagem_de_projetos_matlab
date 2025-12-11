@@ -14,12 +14,13 @@ sim.Ts       = P.Ts;
 sim.Tsim     = P.Tsim;
 sim.delay    = 10; % atraso so pra ficar igual o modelo (da pra ajustar pra ser de fato um delay nos enable)
 sim.steps    = floor(sim.Tsim/sim.Ts) + 1;
-sim.time     = ((0:sim.steps-1)' * sim.Ts) + sim.delay;
+sim.time     = ((0:sim.steps-1)' * sim.Ts);
 sim.nMetrics = 5; % [WTD,WQA,WRC,WAP,WD]
 
 % Seta variaveis de históricos
 sim.hist.W   = zeros(sim.steps, nTasks, sim.nMetrics); % WTD,WQA,WRC,WAP,WD
 sim.hist.fin = zeros(sim.steps, nTasks); % Finished (0/1)
+sim.hist.enable = zeros(sim.steps, nTasks); % Enable (0/1)
 
 %% ---------------------------
 % Construção das Tasks
@@ -51,12 +52,19 @@ end
 taskDependencies = build_dependencies(T);
 
 % Tarefas sem predecessores começam habilitadas
-Tasks = update_dependencies(Tasks, taskDependencies, true);
+% Tasks = update_dependencies(Tasks, taskDependencies, true);
+proj_started = false;
 
 %% ---------------------------
 % Loop de simulação
 % ----------------------------
 for k = 1:sim.steps
+
+    if ~proj_started && sim.time(k) >= sim.delay
+        Tasks = update_dependencies(Tasks, taskDependencies, true);
+        proj_started = true;
+    end
+
     % Executa cada task habilitada
     for i = 1:nTasks
         if Tasks(i).Enable && ~Tasks(i).Finished
@@ -71,6 +79,7 @@ for k = 1:sim.steps
     for i = 1:nTasks
         sim.hist.W(k,i,:)   = [Tasks(i).WTD, Tasks(i).WQA, Tasks(i).WRC, Tasks(i).WAP, Tasks(i).WD];
         sim.hist.fin(k,i)   = Tasks(i).Finished;
+        sim.hist.enable(k,i) = Tasks(i).Enable;
     end
 
     % Projeto habilitado quando qualquer task é habilitada pela primeira vez
@@ -83,7 +92,11 @@ for k = 1:sim.steps
     
     % Projeto finaliza quando TODAS as tasks estão finished
     if k == 1
+        proj_enable_flag   = 0;
         proj_finished_flag = 0;
+    end
+    if proj_enable_flag == 0 && any([Tasks.Enable] == 1)
+        proj_enable_flag = sim.time(k);   % registra instante de habilitação
     end
     if proj_finished_flag == 0 && all([Tasks.Finished] == 1)
         proj_finished_flag = sim.time(k); % registra instante final
